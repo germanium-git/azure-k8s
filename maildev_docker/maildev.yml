@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maildev
+  namespace: maildev
+  labels:
+    app: maildev
+    project: maildev
+spec:
+  selector:
+    matchLabels:
+      app: maildev
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        project: maildev
+        app: maildev
+    spec:
+      containers:
+        - name: maildev
+          image: maildev/maildev:latest
+          env:
+          - name: MAILDEV_OUTGOING_HOST
+            value: "smtp.gmail.com"
+          - name: MAILDEV_OUTGOING_PORT
+            value: "465"
+          - name: MAILDEV_OUTGOING_USER
+            value: "pnemec.posta@gmail.com"
+          - name: MAILDEV_OUTGOING_PASS
+            value: "xxxxxxx"
+          - name: MAILDEV_OUTGOING_SECURE
+            value: "true"
+          - name: MAILDEV_DISABLE_WEB
+            value: "false"
+          - name: MAILDEV_WEB_USER
+            value: "admin"
+          - name: MAILDEV_WEB_PASS
+            value: "admin"
+          - name: MAILDEV_AUTO_RELAY
+            value: "true"
+          ports:
+            - name: http
+              containerPort: 80
+            - name: smtp
+              containerPort: 25
+          resources:
+            requests:
+              cpu: 10m
+              memory: 120Mi
+            limits:
+              memory: 120Mi
+              cpu: 20m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: maildev-http
+  namespace: maildev
+  labels:
+    project: maildev
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    project: maildev
+    app: maildev
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: maildev-smtp
+  namespace: maildev
+  labels:
+    project: maildev
+spec:
+  ports:
+    - port: 25
+      targetPort: 25
+  selector:
+    project: maildev
+    app: maildev
+---

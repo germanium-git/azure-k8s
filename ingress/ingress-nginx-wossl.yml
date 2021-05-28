@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webservers
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    kubernetes.io/ingress.class: nginx
+    # cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  #tls:
+  #- hosts:
+  #  - nginx.nemedpet.germanium.cz
+  #  - apache.nemedpet.germanium.cz
+  #  secretName: tls-webservers-stagging
+  rules:
+    - host: nginx.nemedpet.germanium.cz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: "nginx"
+                port:
+                  number: 80
+    - host: apache.nemedpet.germanium.cz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: "apache"
+                port:
+                  number: 80

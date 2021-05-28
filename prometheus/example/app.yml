@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-example
+  labels:
+    app: metrics-example
+  annotations:
+    kubernetes.io/change-cause: ver1
+spec:
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: metrics-example
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: metrics-example
+    spec:
+      containers:
+        - name: metrics-example
+          image: ondrejsika/metrics-example
+          ports:
+            - name: http
+              containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 10Mi
+            limits:
+              memory: 20Mi
+              cpu: 200m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: metrics-example
+  labels:
+    app: metrics-example
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+  selector:
+    app: metrics-example
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: metrics-example
+  labels:
+    app: metrics-example
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  tls:
+  - hosts:
+    - example.nemedpet.germanium.cz
+    secretName: tls-examle
+  rules:
+    - host: example.nemedpet.germanium.cz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: metrics-example
+                port:
+                  number: 80

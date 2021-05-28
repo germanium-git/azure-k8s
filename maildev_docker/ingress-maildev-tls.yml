@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: maildev
+  namespace: maildev
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  tls:
+  - hosts:
+    - maildev.nemedpet.germanium.cz
+    secretName: tls-webservers-stagging
+  rules:
+    - host: maildev.nemedpet.germanium.cz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: "maildev-http"
+                port:
+                  number: 80

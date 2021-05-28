@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: metrics-example
+spec:
+  groups:
+    - name: metrics-example.rules
+      rules:
+        - alert: ExampleAlert
+          annotations:
+            message: |
+              Alert on: example_requests > 10
+          expr: example_requests > 10
+          labels:
+            severity: none
+        - alert: ExampleAlertA
+          annotations:
+            message: |
+              Alert on: example_requests > 10
+          expr: example_requests > 10
+          labels:
+            severity: none
+            project: a
+            team: backend
+            app: example
+        - alert: ExampleAlertB
+          annotations:
+            message: |
+              Alert on: example_requests > 10
+          expr: example_requests > 10
+          labels:
+            severity: none
+            project: b
+            team: frontend
+            app: foo

@@ -1,0 +1,8 @@
+# Cloudflare token
+cloudflare_api_token = "xxxxxxxxxxxxxxxxxxxxxxx"
+
+# Cloudflare Zone ID
+cloudflare_zone_id = "xxxxxxxxxxxxxxxxxxxxxxx"
+
+# Azure Subscription
+subscription_id = "xxxxxxxxxxxxxxxxxxxxxxx"
