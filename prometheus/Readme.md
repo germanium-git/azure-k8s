@@ -1,47 +1,4 @@
-
-## Video recording 
-
-Disclaimer: The video recording is not part of this repository as it's content is protected by copy right. It's been shared among group of people who have participated in the training and are authorised to use it. 
-Here are some references to time stamps where main topics were presented during the training session during the Day 2/3.
-Hope this helps to find out more information.
-
-|  Note |  time |
-|---|---|
-|Prometheusstack introduction | 4:50:25|
-|gitclone sikalabs/sikalabs-kubernetes-prometheus | 4:56:45|
-|gitclone sika-training-examples/2021-04-19-tietoevry-k8s-prom | 4:59:24 |
-|make crd |  5:03:30 |
-|make copy-example-values|  5:05:10 |
-|Login to grafana|   5:11:10 |
-|Blank prometheus stack |  5:12:00 |
-|Deployment of an example application |  5:13:00 | 
-|Ingresses for example app & grafana & alertmanager |  5:42:00 |
-|Example App - monitoring|  5:48:30|
-|Example App - metrics |  5:49 |
-|example_requests . 10 | recording 2/3| 5:42|
-|Service monitor prometheus/example/sm.yml|  5:52:31|
-|Prometheus rules prometheus/example/pm.yml | 5:54:18|
-|maildev mail.os.cf01.eu | 6:01|
-|smtp_from: monitoring-from@maildev.sikademo.com |6:07|
-|Alertmanager - notify to email maildev.sikademo.com| 6:09|
-|Outgoing email traffic| 6:17|
-|rate(example_requests[1m]) | 6:21|
-|Alertmanager - silence some alerts| 6:36|
-|Alertmanager routes & receivers|6:39|
-|Disable Default Prometheus Rules| 6:40:20|
-|Monitor grafana prometeus/values/prom/general.yml|6:41|
-|Tshoot of alerts detected by prometheus in k8s stack| 6:56|
-|Enabling additional metrics in prometeus in general.yml|6:57|
-|Stop monitoring services managed by service provider in AKS| 7:00|
-|No dashboards in grafana| 7:10:20|
-|Ingress-nginx monitoring in grafana| 7:26 |
-|Grafana dashboard marketplace - nginx ingress|7:28 |
-|Re-deploy prometheus stack to monitor nginx ingress metrics| 7:32| 
-|Grafana dashboard for nginx ingress in the marketplace| 7:34:55 |
-|Prometheus targets with new metrics for ingress |7:38:48|
-|That's all for today :beers: :smile: | 7:39 |
-
-## Prometheus exercises 
+## Prometheus exercises (DAy2)
 
 ### Demo app
 
@@ -105,8 +62,8 @@ File system runs out of space in 24 hours
 ![](../pictures/NodeFilesystemSpaceFillingUp.png)
 
 ### All metrics 
-(Vide recording Day2 7:08)
-Explore Globe button, metric explorer
+(Video recording Day2 7:08)
+Explore Globe button, metric explorer.
 
 node_cpu_seconds_total
 
@@ -170,8 +127,6 @@ cd ingress
 make install STATIC_IP=<LB IP address> DNS_LABEL=<terraform locale>
 ```
 
-7:34:55
-
 Install dashboard for nginx ingress from the marketplace i.e. the [dashboard 9614](https://grafana.com/grafana/dashboards/9614)
 Remember to choose prometheus as data source datasource when looking for another dashboard. 
 
@@ -193,3 +148,68 @@ https://prometheus.nemedpet.germanium.cz/service-discovery
 
 ![](../pictures/nginx_metrics.png)
 
+
+## Prometheus exercises (Day3)
+
+Deploy grafana dashboard for nginx from JSON.
+
+https://github.com/kubernetes/ingress-nginx/blob/master/deploy/grafana/dashboards/nginx.json
+
+Modify the ConfigMap object example/grafana-dashboard.yml
+Change time window from "now-30m" to "now-5m" and have the dashboard re-deployed. 
+```shell
+kubectl apply -f prometheus/example/
+```
+
+
+
+## Video recording Day2
+
+Disclaimer: The video recording is not part of this repository as it's content is protected by copy right. It's been shared among group of people who have participated in the training and are authorised to use it. 
+Here are some references to time stamps where main topics were presented during the training session during the Day 2/3.
+Hope this helps to find out more information.
+
+|  Note |  time |
+|---|---|
+|Prometheusstack introduction | 4:50:25|
+|gitclone sikalabs/sikalabs-kubernetes-prometheus | 4:56:45|
+|gitclone sika-training-examples/2021-04-19-tietoevry-k8s-prom | 4:59:24 |
+|make crd |  5:03:30 |
+|make copy-example-values|  5:05:10 |
+|Login to grafana|   5:11:10 |
+|Blank prometheus stack |  5:12:00 |
+|Deployment of an example application |  5:13:00 | 
+|Ingresses for example app & grafana & alertmanager |  5:42:00 |
+|Example App - monitoring|  5:48:30|
+|Example App - metrics |  5:49 |
+|example_requests . 10 | recording 2/3| 5:42|
+|Service monitor prometheus/example/sm.yml|  5:52:31|
+|Prometheus rules prometheus/example/pm.yml | 5:54:18|
+|maildev mail.os.cf01.eu | 6:01|
+|smtp_from: monitoring-from@maildev.sikademo.com |6:07|
+|Alertmanager - notify to email maildev.sikademo.com| 6:09|
+|Outgoing email traffic| 6:17|
+|rate(example_requests[1m]) | 6:21|
+|Alertmanager - silence some alerts| 6:36|
+|Alertmanager routes & receivers|6:39|
+|Disable Default Prometheus Rules| 6:40:20|
+|Monitor grafana prometeus/values/prom/general.yml|6:41|
+|Tshoot of alerts detected by prometheus in k8s stack| 6:56|
+|Enabling additional metrics in prometeus in general.yml|6:57|
+|Stop monitoring services managed by service provider in AKS| 7:00|
+|No dashboards in grafana| 7:10:20|
+|Ingress-nginx monitoring in grafana| 7:26 |
+|Grafana dashboard marketplace - nginx ingress|7:28 |
+|Re-deploy prometheus stack to monitor nginx ingress metrics| 7:32| 
+|Grafana dashboard for nginx ingress in the marketplace| 7:34:55 |
+|Prometheus targets with new metrics for ingress |7:38:48|
+|That's all for today :beers: :smile: | 7:39 |
+
+### Vide recording day 3
+|  Note |   time stamp |
+|---|---|
+| Alertmanager - routes for alerts |  ~ 1st hour |
+| Alertmanager - multiple notifications routes| ~ 1st hour |
+| Notification to Slack  | 1:14:30 |
+| Nginx grafana dashboard from JSON | 1:47 |
+| ConfigMap object example/grafana-dashboard.yml | 1:54:28|

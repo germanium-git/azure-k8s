@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loggen
+spec:
+  selector:
+    matchLabels:
+      app: loggen
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: loggen
+    spec:
+      containers:
+        - name: loggen
+          image: ondrejsika/loggen
+          resources:
+            requests:
+              cpu: 10m
+              memory: 10Mi
+            limits:
+              memory: 20Mi
+              cpu: 20m
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: loggen
+spec:
+  replicas: 3
+  selector:
+    app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
