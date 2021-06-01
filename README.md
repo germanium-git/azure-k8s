@@ -263,11 +263,11 @@ Deploy ingress service to access log management.
 kubectl apply -f eck/ingress-elk-tls.yml
 ```
 
-### Filebeat
-
 <a>
   <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/ingress_elk.JPG?raw=true" width="400" />
 </a>
+
+### Filebeat
 
 Make sure using http instead of https in filebeat.yml manifest when defining ELASTICSEARCH_HOST variable (see the video recording at 4:13:45).
 
