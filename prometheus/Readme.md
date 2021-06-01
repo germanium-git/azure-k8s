@@ -1,4 +1,4 @@
-## Prometheus exercises (DAy2)
+## Prometheus exercises (Day2)
 
 ### Demo app
 
@@ -15,15 +15,16 @@ kubectl apply -f example/pr.yml
 kubectl apply -f example/grafana-dashboard.yml
 ```
 Description:
-sm.yml - Service monitor, defines which services will be collected by prometheus. You have to create a service point defined by the label.
-app.yml - Deploy simple web app. Port is named http, and app label is metrics-example. 
-pr.yml - Prometheus rules to fire out some alerts.
-grafana-dashboard.yml - It creates the dashboard named Example Dashboard in grafana
+* sm.yml - Service monitor, defines which services will be collected by prometheus. You have to create a service point defined by the label.
+* app.yml - Deploy simple web app. The port is named http, and the app label is metrics-example. 
+* pr.yml - Define Prometheus rules to fire out some alerts.
+* grafana-dashboard.yml - It creates the dashboard named "Example Dashboard" in grafana.
 
 
 ### Grafana account
 
-Use the following credentials to log in to grafana. 
+Use the following credentials to log in to grafana.<br>
+https://grafana.nemedpet.germanium.cz/
 
 User: admin </br>
 Password: prom-operator
@@ -31,16 +32,16 @@ Password: prom-operator
 
 ### Prometheus metrics
 
-Explore prometheus metrics 
+Explore prometheus metrics. 
 - example_requests
 - sum(example_requests)
 - rate(example_requests[1m])
 
 
-### Stopping monitoring of services managed by service provider in AKS
+### Exclude services managed by service provider in AKS from monitoring
 (Video recording Day2 6:57-7:00)
-
-Set the variables listed below to false in the file \azure-k8s\prometheus\values\prom to prevent these metrics from being monitored by prometheus. 
+There are a few metrics generating false positive alerts identified by prometheus.
+To suppress the alerts set the variables listed below in the file [general.yml](https://github.com/germanium-git/azure-k8s/blob/master/prometheus/values/prom/general.yml) to false to prevent these metrics from being monitored by prometheus. 
 
 - kubeControllerManager: false
 - kubeScheduler: false
@@ -49,15 +50,19 @@ Set the variables listed below to false in the file \azure-k8s\prometheus\values
 
 ![](../pictures/disable_system_metrics.png)
 
+And have the prometheus stack re-deployed again through make to make changes effective. 
+```
+make prom
+```
+
 ### Watchdog
 (Video recording Day2 7:03:30 - 7:04:20) 
-It's always in Firing alerts. To check if the whole monitoring stack is down
+It's always ON in Firing alerts. The purpose is to check if the whole monitoring stack is working.
 
 
 ### Node metrics
-(Video recording 7:06:35)
-Find NodeFilesystemSpaceFillingUp alert
-File system runs out of space in 24 hours
+(Video recording day2 7:06:35)
+Explore **NodeFilesystemSpaceFillingUp** alert informing that file system runs out of space in 24 hours.
 
 ![](../pictures/NodeFilesystemSpaceFillingUp.png)
 
@@ -68,8 +73,7 @@ Explore Globe button, metric explorer.
 node_cpu_seconds_total
 
 ### Monitoring of the example app
-Launch some requests by visiting the example app.
-https://example.<terraform locale>.<domain> e.g https://example.nemedpet.germanium.cz/
+Launch some requests by visiting the example app e.g. https://example.nemedpet.germanium.cz/
 
 sum(rate(example_requests[1m]))*60
 
@@ -82,22 +86,22 @@ sum(rate(example_requests[1m]))*60
 
 ### Troubleshooting
 
-There was an issue with dashboards not being loaded by grafana during the training. See the footage 7:10:20
+Note: There was an issue with dashboards not being loaded by grafana during the training. See the recording at 7:10:20.
 
 The issue has been fixed by:
-- Deleting grafana pod - 7:14:17
-- Re-deploying prometheus stack by make prom - 7:17
-- All dashboards turn up in grafana - 7:18:44 
+- Deleting grafana pod - see the recording at 7:14:17.
+- Re-deploying prometheus stack by make prom - see the recording at 7:17
+- All dashboards turn up in grafana - see the recording at 7:18:44 
 
 When troubleshooting this type of issue check if all objects of the type ConfigMap have correct label grafana_dashboard=1. Mentioning of the need the label grafana_dashboard=1 to make grafana load the dashboard is in the recording at 7:12:30.
-The ConfigMap is created through the manifest \azure-k8s\prometheus\example\grafana-dashboard.yml
+The ConfigMap is created through the manifest [grafana-dashboard.yml](https://github.com/germanium-git/azure-k8s/blob/master/prometheus/example/grafana-dashboard.yml)
 
-```shell
+```
 kubectl get cm -A --show-labels
 ```
 
 Check also logs of the container grafana-sc-dashboard in the pod grafana.
-```shell
+```
 kubectl logs -n prometheus-stack prometheus-stack-grafana-68646f5dd-c5d2f grafana-sc-dashboard
 ```
 
@@ -106,22 +110,24 @@ Explore the dashboards.
 ### Monitoring ingress-nginx in grafana
 
 Allow prometheus to grab metrics from nginx ingress.
-Copy "controller.metrics.enabled and controller.metrics.serviceMonitor.enabled" from the https://github.com/kubernetes/ingress-nginx/blob/master/charts/ingress-nginx/templates/controller-servicemonitor.yaml to
-makefile (see the recording at 7:31:20).
+Copy "controller.metrics.enabled and controller.metrics.serviceMonitor.enabled" from the ingress-nginx [helm chart](https://github.com/kubernetes/ingress-nginx/blob/master/charts/ingress-nginx/templates/controller-servicemonitor.yaml) to makefile (see the recording at 7:31:20).
 
-
-Update the file ingress/makefile to make prometheus monitor new ingress metrics after it's re-installed.
+Update the file [ingress/makefile](https://github.com/germanium-git/azure-k8s/blob/master/ingress/Makefile) to make prometheus monitor new ingress metrics after it's re-installed.
 Uncomment the last two lines as these metrics are already in the comments.  
-![](../pictures/uncomment_ingress_prometh_metrics_in_make.JPG
-)
 
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/uncomment_ingress_prometh_metrics_in_make.JPG?raw=true" width="400" />
+</a>
+
+```
 helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx \
-		
+		...
 		--set controller.metrics.enabled=true \
 		--set controller.metrics.serviceMonitor.enabled=true
+```
 
 
-Go to ingress directory and re-deploy prometheus stack to load new ingress metrics.
+Go to ingress directory and get the ingress controller re-deployed to let prometheus monitor new ingress metrics.
 ```shell
 cd ingress
 make install STATIC_IP=<LB IP address> DNS_LABEL=<terraform locale>
@@ -130,15 +136,19 @@ make install STATIC_IP=<LB IP address> DNS_LABEL=<terraform locale>
 Install dashboard for nginx ingress from the marketplace i.e. the [dashboard 9614](https://grafana.com/grafana/dashboards/9614)
 Remember to choose prometheus as data source datasource when looking for another dashboard. 
 
-
-![](../pictures/import_grafana_dashboard.png)
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/import_grafana_dashboard.png?raw=true" width="400" />
+</a>
 
 Check service monitors if nginx-ingress is listed among them. 
 ```shell
 kubectl get servicemonitors.monitoring.coreos.com -A
 ```
 
-![](../pictures/service_monitors.JPG)
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/service_monitors.JPG?raw=true" width="400" />
+</a>
+
 
 
 Check Targets and Servicediscovery in Prometheus whether the nginx ingres metrics have been discovered.
@@ -146,7 +156,9 @@ Check Targets and Servicediscovery in Prometheus whether the nginx ingres metric
 https://prometheus.nemedpet.germanium.cz/targets
 https://prometheus.nemedpet.germanium.cz/service-discovery
 
-![](../pictures/nginx_metrics.png)
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/nginx_metrics.png?raw=true" width="400" />
+</a>
 
 
 ## Prometheus exercises (Day3)
@@ -205,7 +217,7 @@ Hope this helps to find out more information.
 |Prometheus targets with new metrics for ingress |7:38:48|
 |That's all for today :beers: :smile: | 7:39 |
 
-### Vide recording day 3
+### Video recording Day 3
 |  Note |   time stamp |
 |---|---|
 | Alertmanager - routes for alerts |  ~ 1st hour |

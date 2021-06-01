@@ -32,5 +32,6 @@ metric-example:
 	kubectl apply -f example/pr.yml
 	kubectl apply -f example/sm.yml
 
+# Uninstall Prometheus stack
 prom-uninstall:
 	helm uninstall -n prometheus-stack prometheus-stack

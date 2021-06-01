@@ -1,6 +1,7 @@
 setup:
 	helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 
+# Install nginx ingress controller
 install:
 ifndef STATIC_IP
 	$(error STATIC_IP is undefined)

@@ -10,10 +10,10 @@ All instructions in this file are organized chronologically and walk you through
 - terraform
 - kubectl
 - make
-- Ubuntu VM on Windows (optional)
+- Ubuntu VM on Windows (optional, highly recommended though)
 
 ## 02-Deploy k8s cluster in AKS
-New cluster will be deployed in AKS by deplpying pre-provisioned terraform module 
+New cluster will be deployed in AKS by using the pre-provisioned terraform module 
 
 1. Clone the repository and copy terraform.tfvars.github to terraform.tfvars to store secret variables. Make sure terraform.tfvars is in .gitignore to prevent secure information from being pushed accidentally to repository
 2. Generate new Cloudflare token at https://dash.cloudflare.com/profile/api-tokens and add it as a secret variable in terraform.tfvars
@@ -33,38 +33,36 @@ terraform apply
 ```
 7. Check if the file kubeconfig has been created by terraform. Make sure it doesn't leak to github repository by ensuring it exists in .gitignore file. 
    
-8. Update kubectl credentials.<br>
-Preferably try to run Ubuntu VM on your windows workstations and create a symlink pointing to the directory shared with Windows
+8. Update kubectl credentials (Linux or Ubuntu on Windows Subsystem for Linux (WSL)).<br>
+   Preferably try to run Ubuntu VM on your windows workstations and create a symlink pointing to the directory shared with Windows
 ```shell
 ln -s /mnt/c/Users/username/.............../azure-k8s/ azure-k8s
 make kubeconfig-ubuntu
 ```
-Or on windows workstation run a powershell scrip k8s-config.ps1 wrapped up in make
-```shell
+9. Update kubectl credentials (Windows).<br> 
+   Or on windows workstation run a powershell scrip k8s-config.ps1 wrapped up in make.
+```
 make kubeconfig-windows
 ```
-To remove a symlink use the following command if needed.
-```shell
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To remove a symlink use the following command if needed.
+```
 unlink symlink_name
 ```
-In case you already have multiple clusters in config file choose the right context
-```shell
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In case you already have multiple clusters in config file choose the right context.
+```
 kubectl config get-contexts
 kubectl config set-context
 ```
-
-Check if the cluster is reachable, i.e.: 
-```shell
+10. Check if the cluster is reachable, i.e.: 
+```
 kubectl get nodes
 kubectl get pods -A 
 ```
 
-
 ## 03-Certification manager
 The ingress controller that's going to be deployed in the next step will need a certificate for each ingress service. In this exercise the provider Let's Encypt is going to be used.
-Navigate to the cert-manager directory.
+Navigate to the cert-manager directory and carry out the following steps: 
 ```shell
-cd cert-manager
 make setup
 make install
 make apply-issuers
@@ -72,22 +70,40 @@ make apply-issuers
 
 ## 04-Ingress controller
 Install nginx ingress controller and check the status.
-Navigate to the ingress directory.
-```shell
-cd ingress
+Navigate to the ingress directory and carry out the following steps:
+```
 make setup
 make install STATIC_IP=<IP address of LB> DNS_LABEL=nemedpet
 make status
 ```
-Deploy test apps apache and nginx and create ingress service for each of them
+Deploy test applications apache and nginx and create ingress service for each of them.
 ```shell
 make webingress
 make webservers:
 ```
 
 Check if ingress services work in a web browser and what certificates are in use.
-apache.<terraform locale>.<cloudflare domain>
-nginx.<terraform locale>.<cloudflare domain>
+https://apache.nemedpet.germanium.cz/
+<br>
+https://nginx.nemedpet.germanium.cz/
+
+Make sure you are using correct URL in the form:<br>
+apache.&lt;terraform locale&gt;.&lt;cloudflare domain&gt;<br>
+nginx.&lt;terraform locale&gt;.&lt;cloudflare domain&gt;<br>
+
+You should receive responses similar to the following pictures.
+
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/apache_cert.png?raw=true" width="300" />
+</a>
+
+<br>
+<br>
+
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/nginx_cert.png?raw=true" width="300" />
+</a>
+
 
 ### Video recording 
 
@@ -99,31 +115,29 @@ nginx.<terraform locale>.<cloudflare domain>
 
 
 ## 05-Maildev
-Maildev is asimple SMTP server with web UI used for notifications when an alert occurs.  
-It appers not to be able to forward email messages externally.
+Maildev is a simple SMTP server with web UI used for notifications when an alert occurs.  
+It appears not to be able to forward email messages externally. There is a bug with environmental variables tracked [here](https://github.com/maildev/maildev/issues/326) preventing emails from being sent out.
 Navigate to the maildev_docker directory. 
-```shell
-cd maildev_docker
+```
 kubectl apply -f ns-maildev.yml
 kubectl apply -f ingress-maildev-tls.yml
 kubectl apply -f maildev.yml
 ```
-We can't use Ondrej's Sika helm chart to deploy the maildev as the his setup is for different cloud provider using traefic ingress controller. He used another instance of maildev server already pre-provisioned running on panda-cluster.
+We can't use Ondrej's Sika helm chart to deploy the maildev as his setup is for different cloud provider using traefic ingress controller. He used another instance of maildev server already pre-provisioned running on panda-cluster.
 ### Video recording
-|  Note |  video file | time |
+|  Note |  video file | time stamp|
 |---|---|---|
 | makefile maildev | recording 2/3 | 5:02:15 |
 | maildev.sikademo.com 206.189.249.73 (panda-default cluster) | recording 2/3 | 6:17 |
 | alertmanager-config.yml connected to 161.35.223.199:30025| recording 2/3 | 6:18:24|
 
 ## 06-Prometheus
-Begin with deploying prometheus stack as described below and then follow the detailed description in the !['Readme.md'](prometheus/Readme.md) file in the prometheus folder.
+Begin with deploying prometheus stack as described below and then follow the detailed description in the [Readme.md](https://github.com/germanium-git/azure-k8s/blob/master/prometheus/Readme.md) file in the prometheus folder.
 
 ### Day2
 Navigate to the prometheus directory and deploy prometheus stack.
 ```shell
-cd prometheus
-# Add Prometheus Helm repositoty
+# Add Prometheus Helm repository
 make helm
 # Apply Prometheus CustomResourceDefinition
 make crd
@@ -149,7 +163,7 @@ Advance configuration for alertmanager.
 |Create new dashboard| recording 3/3 |5:29:45|
 
 
-Follow the steps described in https://github.com/ondrejsika/kubernetes-training#logging
+Follow the steps described in [the original repository](https://github.com/ondrejsika/kubernetes-training#logging)
 
 ### Setup ECK Operator
 See the time stamp 3:41:10
@@ -222,7 +236,7 @@ Get password for user `elastic`:
 kubectl get -n logs secret logs-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode; echo
 ```
 
-Run proxy to Kibana:
+Run proxy to Kibana to be able to access Kibana UI remotely without having any ingress service:
 
 ```
 kubectl -n logs port-forward service/logs-kb-http 5601
@@ -233,7 +247,10 @@ See logs in Kibana (see the time stamp 3:52:45):
 
 <http://127.0.0.1:5601/app/logs/stream>
 
-![](pictures/kibana_login_portforward.JPG)
+
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/kibana_login_portforward.JPG?raw=true" width="300" />
+</a>
 
 username: elastic
 password: see the output of the previous command
@@ -247,19 +264,31 @@ kubectl apply -f eck/ingress-elk-tls.yml
 ```
 
 ### Filebeat
-![](pictures/ingress_elk.JPG)
+
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/ingress_elk.JPG?raw=true" width="400" />
+</a>
 
 Make sure using http instead of https in filebeat.yml manifest when defining ELASTICSEARCH_HOST variable (see the video recording at 4:13:45).
 
-![filebeat_http](pictures/filebeat_http.JPG)
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/filebeat_http.JPG?raw=true" width="400" />
+</a>
+
+
 
 Check Indexes in Management > Stack Management > Index Management. There should be filebeat listed among the known indices known.
-![Index Management](pictures/index_management.JPG)
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/index_management.JPG?raw=true" width="400" />
+</a>
 
 Check Observability > Logs
 
 Filter out logs for traffic generated by apachebenchmark
-![](pictures/logs_apachebenchmark.JPG)
+
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/logs_apachebenchmark.JPG?raw=true" width="400" />
+</a>
 
 
 ### Demo loggen app
@@ -276,11 +305,17 @@ Define index pattern:
 - step 1/2 - filebeat-*
 - step 2/2 - @timestamp
 
-![](pictures/index_pattern_1.JPG)
-![](pictures/index_pattern_2.JPG)
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/index_pattern_1.JPG?raw=true" width="400" />
+</a>
 
-Check Kibana > Discover
-No streaming, logs have to be manually refreshed.
+<a>
+  <img src="https://github.com/germanium-git/azure-k8s/blob/master/pictures/index_pattern_2.JPG?raw=true" width="400" />
+</a>
+
+
+Check Kibana > Discover<br>
+There's no streaming, logs have to be manually refreshed.
 Choose interested fields from available labels to organize columns in the output.
 Use for instance
 - kubernetes.labels.app
@@ -294,7 +329,6 @@ Save search
 Create a new dashboard 
 Kibana > Dashboard > Create new dashboard
 Select Add panels, choose saved search from the previous step. 
-
 
 
 ## 08-Rancher
@@ -319,12 +353,13 @@ helm install rancher rancher-latest/rancher \
   --set letsEncrypt.email=me@example.org
 ```
 Access https://rancher.nemedpet.germanium.cz/
-Change the password
+<br>
+and change the password to log in.
 
 
 ## Appendix - useful links
-Apache Benchmark - https://bobcares.com/blog/apache-benchmark-install-ubuntu/
-Infracost - https://www.infracost.io/
-netshoot: a Docker + Kubernetes network trouble-shooting swiss-army container - https://github.com/nicolaka/netshoot
-bash auto-completion on Linux - https://kubernetes.io/docs/tasks/tools/included/optional-kubectl-configs-bash-linux/
+Apache Benchmark - https://bobcares.com/blog/apache-benchmark-install-ubuntu/ <br>
+Infracost - https://www.infracost.io/ <br>
+netshoot: a Docker + Kubernetes network trouble-shooting swiss-army container - https://github.com/nicolaka/netshoot <br>
+bash auto-completion on Linux - https://kubernetes.io/docs/tasks/tools/included/optional-kubectl-configs-bash-linux/ <br>
 
