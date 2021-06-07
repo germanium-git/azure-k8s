@@ -1,16 +1,25 @@
 # Azure Kubernetes training
 
-All instructions in this file are organized chronologically and walk you through the whole process of reproducing the kubernetes environment in Azure. That includes also
+All instructions in this file are organized chronologically and walk you through the whole process of reproducing the kubernetes environment in Azure. That also includes:
 - Prometheus stack to scrap metrics from applications and k8s cluster
 - Alert manager to send notifications
 - Grafana to visualize metrics
 - ELK Stack: Elasticsearch, Filebeat, Kibana for log management
 
 ## 01-Prerequisites
+
+### Windows users
+- [Ubuntu VM on Windows](https://docs.microsoft.com/en-us/windows/wsl/install-win10) (optional, highly recommended though)
+<br>(or other Linux distribution of your choice)<br>
+- Windows Terminal
+
+Plus the following tools installed on the linux VM:
 - terraform
 - kubectl
 - make
-- Ubuntu VM on Windows (optional, highly recommended though)
+
+### Linux * macOS
+Make sure terraform, kubectl, and make is installed on your system.
 
 ## 02-Deploy k8s cluster in AKS
 New cluster will be deployed in AKS by using the pre-provisioned terraform module 
@@ -77,9 +86,10 @@ make install STATIC_IP=<IP address of LB> DNS_LABEL=nemedpet
 make status
 ```
 Deploy test applications apache and nginx and create ingress service for each of them.
+Make sure the URL addresses nginx.nemedpet.germanium.cz in the ingress-nginx-tls.yml manifest file are updated with proper names matching the DNS record nginx.<terraform locals>.<domain>.
 ```shell
 make webingress
-make webservers:
+make webservers
 ```
 
 Check if ingress services work in a web browser and what certificates are in use.
@@ -117,7 +127,8 @@ You should receive responses similar to the following pictures.
 ## 05-Maildev
 Maildev is a simple SMTP server with web UI used for notifications when an alert occurs.  
 It appears not to be able to forward email messages externally. There is a bug with environmental variables tracked [here](https://github.com/maildev/maildev/issues/326) preventing emails from being sent out.
-Navigate to the maildev_docker directory. 
+Navigate to the maildev_docker directory.
+Update the URL address of the web UI of the maildev server in the ingress service manifest ingress-maildev-tls.yml.
 ```
 kubectl apply -f ns-maildev.yml
 kubectl apply -f ingress-maildev-tls.yml

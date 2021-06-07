@@ -61,7 +61,7 @@ It's always ON in Firing alerts. The purpose is to check if the whole monitoring
 
 
 ### Node metrics
-(Video recording day2 7:06:35)
+(Video recording Day2 7:06:35)
 Explore **NodeFilesystemSpaceFillingUp** alert informing that file system runs out of space in 24 hours.
 
 ![](../pictures/NodeFilesystemSpaceFillingUp.png)
@@ -167,6 +167,11 @@ Deploy grafana dashboard for nginx from JSON.
 
 https://github.com/kubernetes/ingress-nginx/blob/master/deploy/grafana/dashboards/nginx.json
 
+Copy the file raw content and go to Grafana > dashboard > manage > Import > Import via panel JSON
+Use and alternate name when and error with overlapping names and ID occurs. 
+Note: The dashboard from marketplace uses the same name and ID as the one from JSON definition. 
+
+Demonstrate the possibility of importing dashboards, and their customization through JSON in the ConfigMap manifest.
 Modify the ConfigMap object example/grafana-dashboard.yml
 Change time window from "now-30m" to "now-5m" and have the dashboard re-deployed. 
 ```shell
