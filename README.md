@@ -17,6 +17,7 @@ Plus the following tools installed on the linux VM:
 - terraform
 - kubectl
 - make
+- Azure cli 
 - [Apache Benchmark](https://bobcares.com/blog/apache-benchmark-install-ubuntu/) (optional)
 
 ### Linux & macOS
