@@ -2,6 +2,8 @@ setup:
 	helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 
 # Install nginx ingress controller
+# The last two lines should be commented out when controller is installed first time.
+# The last two lines will be uncommented later when metrics for prometheus are activated.
 install:
 ifndef STATIC_IP
 	$(error STATIC_IP is undefined)
@@ -19,6 +21,7 @@ endif
 		--set controller.service.annotations."service\.beta\.kubernetes\.io/azure-dns-label-name"="$(DNS_LABEL)" \
 		#--set controller.metrics.enabled=true \
 		#--set controller.metrics.serviceMonitor.enabled=true
+
 
 webingress:
 	kubectl apply -f ingress-nginx-tls.yml
