@@ -165,11 +165,9 @@ make crd
 # Deploy Prometheus stack
 # Update FQDN names of hosts in ingress.yml and alertmanager-config.yml before you continue
 make prom
-# Deploy example app and monitoring
-make metric-example
 ```
 ### Day3
-Advance configuration for alertmanager.
+Advance configuration for alertmanager - out of scope.
 
 
 ## 07-ECK
