@@ -2,6 +2,7 @@ setup:
 	helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 
 # Install nginx ingress controller
+# The configurable parameters are explained on https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-helm/
 # The last two lines should be commented out when controller is installed first time.
 # The last two lines will be uncommented later when metrics for prometheus are activated.
 install:

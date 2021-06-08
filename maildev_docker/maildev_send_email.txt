@@ -1,0 +1,10 @@
+kubectl exec --stdin --tty maildev-0 -n maildev -- sh
+
+--------------------------------------------------------------------------------
+
+cat <<EOF >> mail.txt
+Hi!
+EOF
+
+
+apk add --no-cache curl && curl smtp://maildev-smtp:25 --mail-from sender@gmail.com --mail-rcpt recipient@gmail.com --upload-file ./mail.txt

@@ -47,6 +47,7 @@ terraform apply
 8. Update kubectl credentials (Linux or Ubuntu on Windows Subsystem for Linux (WSL)).<br>
    Preferably try to run Ubuntu VM on your windows workstations and create a symlink pointing to the directory shared with Windows
 ```shell
+cd
 ln -s /mnt/c/Users/username/.............../azure-k8s/ azure-k8s
 make kubeconfig-ubuntu
 ```
@@ -87,6 +88,9 @@ make setup
 make install STATIC_IP=<IP address of LB> DNS_LABEL=nemedpet
 make status
 ```
+Note: To understand all the parameters used when installing nginx by helm go to the [official documentation](https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-helm) explaining the procedure of installing nginx through helm.
+You may find additional information about **controller.service.loadBalancerIP**, **set controller.service.annotations** there.
+
 Deploy test applications apache and nginx and create ingress service for each of them.
 Make sure the URL addresses nginx.nemedpet.germanium.cz in the ingress-nginx-tls.yml manifest file are updated with proper names matching the DNS record nginx.<terraform locals>.<domain>.
 ```shell
@@ -137,6 +141,7 @@ kubectl apply -f ingress-maildev-tls.yml
 kubectl apply -f maildev.yml
 ```
 We can't use Ondrej's Sika helm chart to deploy the maildev as his setup is for different cloud provider using traefic ingress controller. He used another instance of maildev server already pre-provisioned running on panda-cluster.
+
 ### Video recording
 |  Note |  video file | time stamp|
 |---|---|---|
