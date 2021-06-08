@@ -140,6 +140,9 @@ kubectl apply -f ns-maildev.yml
 kubectl apply -f ingress-maildev-tls.yml
 kubectl apply -f maildev.yml
 ```
+
+Check if maildev is working by visiting the UI https://maildev.nemedpet.germanium.cz.
+
 We can't use Ondrej's Sika helm chart to deploy the maildev as his setup is for different cloud provider using traefic ingress controller. He used another instance of maildev server already pre-provisioned running on panda-cluster.
 
 ### Video recording
