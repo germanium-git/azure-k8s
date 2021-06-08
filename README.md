@@ -166,6 +166,12 @@ make crd
 # Update FQDN names of hosts in ingress.yml and alertmanager-config.yml before you continue
 make prom
 ```
+Check URL(s):<br>
+https://prometheus.nemedpet.germanium.cz/
+https://grafana.nemedpet.germanium.cz/
+https://alertmanager.nemedpet.germanium.cz/
+
+
 ### Day3
 Advance configuration for alertmanager - out of scope.
 
