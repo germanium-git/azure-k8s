@@ -167,10 +167,9 @@ make crd
 make prom
 ```
 Check URL(s):<br>
-https://prometheus.nemedpet.germanium.cz/
-https://grafana.nemedpet.germanium.cz/
-https://alertmanager.nemedpet.germanium.cz/
-
+https://prometheus.nemedpet.germanium.cz/<br>
+https://grafana.nemedpet.germanium.cz/<br>
+https://alertmanager.nemedpet.germanium.cz/<br>
 
 ### Day3
 Advance configuration for alertmanager - out of scope.
